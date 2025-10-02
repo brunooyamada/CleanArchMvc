@@ -19,7 +19,7 @@ namespace CleanArchMvc.Domain.Tests
             Action action = () => new Category(-1, "Category Name");
             action.Should()
                 .Throw<CleanArchMvc.Domain.Validation.DomainExceptionValidation>()
-                .WithMessage("Invalid Id value");
+                .WithMessage("Invalid Id value.");
         }
 
         [Fact]
