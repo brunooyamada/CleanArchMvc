@@ -15,14 +15,14 @@ namespace CleanArchMvc.Infra.Data.Tests
         public async Task CrudProduct_WithValidParameters_ResultValidState()
         {
             var product = new Product(1, "Product Name", "Product Description", 9.99m, 99, "product image");
-            var produtoCriado = await _repository.Create(product);
+            var produtoCriado = await _repository.CreateAsync(product);
 
             Assert.NotNull(produtoCriado);
             Assert.Equal("Product Name", produtoCriado.Name);
 
             // Update
             produtoCriado.Update("Product Name Updated", "Product Description Updated", 19.99m, 199, "product image updated", 1);
-            var produtoUpdated = await _repository.Update(produtoCriado);
+            var produtoUpdated = await _repository.UpdateAsync(produtoCriado);
 
             Assert.NotNull(produtoUpdated);
             Assert.Equal("Product Name Updated", produtoUpdated.Name);
@@ -46,7 +46,7 @@ namespace CleanArchMvc.Infra.Data.Tests
             Assert.True(produtos.Count() > 0);
 
             // Remove
-            await _repository.Remove(produtoCriado);
+            await _repository.RemoveAsync(produtoCriado);
             var produtoRemovido = await _repository.GetByIdAsync(produtoCriado.Id);
             Assert.Null(produtoRemovido);
         }
