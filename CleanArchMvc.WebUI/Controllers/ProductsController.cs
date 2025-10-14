@@ -2,7 +2,6 @@
 using CleanArchMvc.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Identity.Client;
 
 namespace CleanArchMvc.WebUI.Controllers
 {
@@ -10,10 +9,12 @@ namespace CleanArchMvc.WebUI.Controllers
     {
         private readonly IProductService _productService;
         private readonly ICategoryService _categoryService;
-        public ProductsController(IProductService productService, ICategoryService categoryService)
+        private readonly IWebHostEnvironment _environment;
+        public ProductsController(IProductService productService, ICategoryService categoryService, IWebHostEnvironment environment)
         {
             _productService = productService;
             _categoryService = categoryService;
+            _environment = environment;
         }
 
         [HttpGet]
@@ -26,7 +27,7 @@ namespace CleanArchMvc.WebUI.Controllers
         [HttpGet()]
         public async Task<IActionResult> Create()
         {
-            ViewBag.CategoryId = 
+            ViewBag.CategoryId =
                 new SelectList(await _categoryService.GetCategories(), "Id", "Name");
             return View();
         }
@@ -72,7 +73,7 @@ namespace CleanArchMvc.WebUI.Controllers
         [HttpGet()]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) 
+            if (id == null)
                 return NotFound();
 
             var productDto = await _productService.GetById(id.Value);
@@ -87,6 +88,21 @@ namespace CleanArchMvc.WebUI.Controllers
         {
             await _productService.Remove(id);
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+            var productDto = await _productService.GetById(id.Value);
+
+            if (productDto == null) return NotFound();
+            var wwwroot = _environment.WebRootPath;
+            var image = Path.Combine(wwwroot, "images\\" + productDto.Image);
+            var exists = System.IO.File.Exists(image);
+            ViewBag.ImageExist = exists;
+
+            return View(productDto);
         }
     }
 }
