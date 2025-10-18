@@ -15,6 +15,7 @@ namespace CleanArchMvc.Infra.Data.Tests
         public async Task CrudProduct_WithValidParameters_ResultValidState()
         {
             var product = new Product(1, "Product Name", "Product Description", 9.99m, 99, "product image");
+            product.Category = new Category("Teste");
             var produtoCriado = await _repository.CreateAsync(product);
 
             Assert.NotNull(produtoCriado);

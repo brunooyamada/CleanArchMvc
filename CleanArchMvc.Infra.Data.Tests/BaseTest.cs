@@ -12,7 +12,7 @@ namespace CleanArchMvc.Infra.Data.Tests
         {
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddDbContext<ApplicationDbContext>(options =>
-                options.UseInMemoryDatabase("TestDatabase"));
+                options.UseInMemoryDatabase("TestDatabase" + Guid.NewGuid().ToString()));
 
             ServiceProvider service = serviceCollection.BuildServiceProvider();
             _context = service.GetService<ApplicationDbContext>();

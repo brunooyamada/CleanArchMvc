@@ -16,10 +16,11 @@ namespace CleanArchMvc.Application.Services
             _mapper = mapper;
         }
 
-        public async Task Add(CategoryDTO categoryDto)
+        public async Task<CategoryDTO> Add(CategoryDTO categoryDto)
         {
             var categoryEntity = _mapper.Map<Domain.Entities.Category>(categoryDto);
-            await _categoryRepository.Create(categoryEntity);
+            var result = await _categoryRepository.Create(categoryEntity);
+            return _mapper.Map<CategoryDTO>(result);
         }
 
         public async Task<CategoryDTO> GetById(int? id)
@@ -34,16 +35,22 @@ namespace CleanArchMvc.Application.Services
             return _mapper.Map<IEnumerable<CategoryDTO>>(categoriesEntity);
         }
 
-        public async Task Remove(int? id)
+        public async Task<bool> Remove(int? id)
         {
             var categoryEntity = _categoryRepository.GetById(id).Result;
+            if (categoryEntity == null)
+            {
+                return false;
+            }
             await _categoryRepository.Remove(categoryEntity);
+            return true;
         }
 
-        public async Task Update(CategoryDTO categoryDto)
+        public async Task<CategoryDTO> Update(CategoryDTO categoryDto)
         {
             var categoryEntity = _mapper.Map<Domain.Entities.Category>(categoryDto);
-            await _categoryRepository.Update(categoryEntity);
+            var result = await _categoryRepository.Update(categoryEntity);
+            return _mapper.Map<CategoryDTO>(result);
         }
     }
 }
