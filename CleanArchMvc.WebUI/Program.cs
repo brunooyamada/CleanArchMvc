@@ -7,7 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
 
 var app = builder.Build();
 
@@ -24,14 +23,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-using (var scope = app.Services.CreateScope())
-{
-    var seedUserRoleInitial = scope.ServiceProvider.GetRequiredService<ISeedUserRoleInitial>();
-    seedUserRoleInitial.SeedRoles();
-    seedUserRoleInitial.SeedUsers();
-}
+SeedUserRoles(app);
 
-    app.UseAuthentication();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
@@ -39,3 +33,14 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+void SeedUserRoles(IApplicationBuilder app)
+{
+    using (var serviceScope = app.ApplicationServices.CreateScope())
+    {
+        var seed = serviceScope.ServiceProvider
+            .GetService<ISeedUserRoleInitial>();
+        seed.SeedUsers();
+        seed.SeedRoles();
+    }
+}
