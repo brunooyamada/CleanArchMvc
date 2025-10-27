@@ -35,10 +35,12 @@ public static class DependencyInjectionAPI
 
         services.AddScoped<IAuthenticate, AuthenticateService>();
         
-        services.AddAutoMapper(typeof(DomainToDTOMappingProfile));
+        //services.AddAutoMapper(typeof(DomainToDTOMappingProfile));
+        services.AddAutoMapper(cfg => cfg.AddProfile(typeof(DomainToDTOMappingProfile)));
 
         var myHandlers = AppDomain.CurrentDomain.Load("CleanArchMvc.Application");
-        services.AddMediatR(myHandlers);
+        //services.AddMediatR(myHandlers);
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(myHandlers));
 
         return services;
     }
